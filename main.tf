@@ -1,39 +1,38 @@
-resource "aws_lb" "nlb" {
-  count                            = "${var.lb_type == "network" ? 1: 0}"
-  name                             = "${var.name}"
-  internal                         = "${var.internal}"
-  load_balancer_type               = "${var.lb_type}"
-  security_groups                  = "${var.security_groups}"
-  enable_deletion_protection       = "${var.enable_deletion_protection}"
-  enable_cross_zone_load_balancing = "${var.enable_cross_zone_load_balancing}"
-  ip_address_type                  = "${var.ip_address_type}"
+resource "aws_instance" "vm" {
+  count = "${var.vm_count}"
 
-  access_logs {
-    bucket  = "${var.access_log_bucket}"
-    prefix  = "${var.access_log_prefix}"
-    enabled = "${var.access_log_enabled}"
+  ami                         = "${var.ami}"
+  instance_type               = "${var.instance_type}"
+  subnet_id                   = "${var.subnet_id}"
+  associate_public_ip_address = "${var.associate_public_ip_address}"
+  vpc_security_group_ids      = ["${var.vpc_security_group_ids}"]
+  key_name                    = "${var.key_name}"
+  monitoring                  = "${var.monitoring}"
+  user_data                   = "${var.user_data}"
+
+  root_block_device {
+    delete_on_termination = "${lookup(var.root_block_device[count.index], "delete_on_termination", "")}"
+    volume_type           = "${lookup(var.root_block_device[count.index], "volume_type", "")}"
+    volume_size           = "${lookup(var.root_block_device[count.index], "volume_size", "")}"
+
+    #   iops                  = "${lookup(var.root_block_device[count.index], "iops", "")}"
+    encrypted  = "${lookup(var.root_block_device[count.index], "encrypted", "")}"
+    kms_key_id = "${lookup(var.root_block_device[count.index], "kms_key_id", "")}"
   }
 
-  tags = "${var.tags}"
-}
+  ebs_block_device {
+    delete_on_termination = "${lookup(var.ebs_block_device[count.index], "delete_on_termination", "")}"
+    device_name           = "${lookup(var.ebs_block_device[count.index], "device_name", "")}"
+    snapshot_id           = "${lookup(var.ebs_block_device[count.index], "snapshot_id", "")}"
+    volume_type           = "${lookup(var.ebs_block_device[count.index], "volume_type", "")}"
+    volume_size           = "${lookup(var.ebs_block_device[count.index], "volume_size", "")}"
 
-resource "aws_lb" "alb" {
-  count                      = "${var.lb_type == "application" ? 1: 0}"
-  name                       = "${var.name}"
-  internal                   = "${var.internal}"
-  load_balancer_type         = "${var.lb_type}"
-  security_groups            = ["${var.security_groups}"]
-  idle_timeout               = "${var.idle_timeout}"
-  enable_deletion_protection = "${var.enable_deletion_protection}"
-  enable_http2               = "${var.enable_http2}"
-  ip_address_type            = "${var.ip_address_type}"
-  subnets                    = ["${var.subnets}"]
-
-  access_logs {
-    bucket  = "${var.access_log_bucket}"
-    prefix  = "${var.access_log_prefix}"
-    enabled = "${var.access_log_enabled}"
+    #  iops                  = "${lookup(var.ebs_block_device[count.index], "iops", "")}"
+    encrypted  = "${lookup(var.ebs_block_device[count.index], "encrypted", "")}"
+    kms_key_id = "${lookup(var.ebs_block_device[count.index], "kms_key_id", "")}"
   }
 
-  tags = "${var.tags}"
+  tags = "${merge(var.tags, var.instance_tags)}"
+
+  volume_tags = "${var.tags}"
 }
