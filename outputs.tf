@@ -1,39 +1,29 @@
-output "lb_nlb_id" {
-  description = "The IDs of Network Load Balancer"
-  value       = "${aws_lb.nlb.*.id}"
+output "instance_id" {
+  description = "The ID of Instances"
+  value       = "${aws_instance.vm.*.id}"
 }
 
-output "lb_nlb_arn" {
-  description = "The ARN of Network Load Balancer"
-  value       = "${aws_lb.nlb.*.arn}"
+output "instance_public_dns" {
+  description = "The Public DNS Name of Instances"
+  value       = "${aws_instance.vm.*.public_dns}"
 }
 
-output "lb_nlb_dns_name" {
-  description = "The DNS Name of Network Load Balancer"
-  value       = "${aws_lb.nlb.*.dns_name}"
+output "instance_public_ip" {
+  description = "The Public IP address of Instances"
+  value       = "${aws_instance.vm.*.public_ip}"
 }
 
-output "lb_nlb_zone_id" {
-  description = "The Zone ID of Network Load Balancer"
-  value       = "${aws_lb.nlb.*.zone_id}"
+output "instance_primary_network_interface_id" {
+  description = "The ID the primary network interface of Instances"
+  value       = "${aws_instance.vm.*.primary_network_interface_id}"
 }
 
-output "lb_alb_id" {
-  description = "The IDs of Application Load Balancer"
-  value       = "${aws_lb.alb.*.id}"
+output "instance_private_dns" {
+  description = "The Private DNS Name of Instances"
+  value       = "${aws_instance.vm.*.private_dns}"
 }
 
-output "lb_alb_arn" {
-  description = "The ARN of Application Load Balancer"
-  value       = "${aws_lb.alb.*.arn}"
-}
-
-output "lb_alb_dns_name" {
-  description = "The DNS Name of Application Load Balancer"
-  value       = "${aws_lb.alb.*.dns_name}"
-}
-
-output "lb_alb_zone_id" {
-  description = "The Zone ID of Application Load Balancer"
-  value       = "${aws_lb.alb.*.zone_id}"
+output "instance_private_ip" {
+  description = "The Private IP address of Instances"
+  value       = "${aws_instance.vm.*.private_ip}"
 }

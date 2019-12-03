@@ -1,63 +1,85 @@
-### Common variables
-
-variable "name" {
-  description = "The name of LB"
+variable "vm_count" {
+  description = "Count of Instances to deploy"
   type        = "string"
-  default     = "LB"
+  default     = "1"
 }
 
-variable "internal" {
-  description = "Should be false if you want to have an external LB"
-  type        = "string"
-  default     = "false"
-}
-
-variable "lb_type" {
-  description = "Controls the type of LB. You can choose between network and application"
-  type        = "string"
-  default     = "application"
-}
-
-variable "security_groups" {
-  description = "List of Security Groups for your LB"
-  type        = "list"
-  default     = []
-}
-
-variable "enable_deletion_protection" {
-  description = "Should be true if you want to protect the LB against deletion by Terraform"
-  type        = "string"
-  default     = "false"
-}
-
-variable "ip_address_type" {
-  description = "Controls which type of IP adresses is used by the subnets of the LB. Possible Values are ipv4 and dualstack"
-  type        = "string"
-  default     = "ipv4"
-}
-
-variable "access_log_bucket" {
-  description = "The S3 Bucket name to store access logs in"
+variable "ami" {
+  description = "The ID of AMI"
   type        = "string"
   default     = ""
 }
 
-variable "access_log_prefix" {
-  description = "The S3 bucket prefix"
+variable "user_data" {
+  description = "User Data used to configure the instance"
   type        = "string"
-  default     = "lb_access_logs"
+  default     = ""
 }
 
-variable "access_log_enabled" {
-  description = "Should be true if you want to activate access logs for your load balancer"
+variable "instance_type" {
+  description = "Defines the instance type"
+  type        = "string"
+  default     = "t2.medium"
+}
+
+variable "subnet_id" {
+  description = "The ID of subnet where to deploy instance"
+  type        = "string"
+  default     = ""
+}
+
+variable "associate_public_ip_address" {
+  description = "Should be true if you want to have public IP address on your instance"
+  type        = "string"
+  default     = "true"
+}
+
+variable "vpc_security_group_ids" {
+  description = "List of IDs for security groups"
+  type        = "list"
+  default     = []
+}
+
+variable "key_name" {
+  description = "The name of the key pair"
+  type        = "string"
+  default     = ""
+}
+
+variable "monitoring" {
+  description = "Should be true if you want to activate monitoring"
   type        = "string"
   default     = "false"
 }
 
-variable "subnets" {
-  description = "List of the ID of the subnets of which attach to the Load Balancer"
+variable "root_block_device" {
+  description = "Lists of root devices"
   type        = "list"
-  default     = []
+
+  default = [
+    {
+      delete_on_termination = "true"
+      volume_size           = "50"
+    },
+  ]
+}
+
+variable "ebs_block_device" {
+  description = "List of ebs block devices"
+  type        = "list"
+
+  default = [
+    {
+      delete_on_termination = "true"
+      device_name           = "sdf"
+      snapshot_id           = ""
+      volume_type           = ""
+      volume_size           = "50"
+      iops                  = ""
+      encrypted             = ""
+      kms_key_id            = ""
+    },
+  ]
 }
 
 variable "tags" {
@@ -65,31 +87,17 @@ variable "tags" {
   type        = "map"
 
   default = {
-    "Name"        = "RHForum2019"
     "owner"       = "nehrman"
     "purpose"     = "demo"
     "environment" = "production"
   }
 }
 
-### Network Load Balancer specific variables
+variable "instance_tags" {
+  description = "Specific tags used by instances"
+  type        = "map"
 
-variable "enable_cross_zone_load_balancing" {
-  description = "Should be true if you want the LB to be cross zone. Only for Network LoadBalancer"
-  type        = "string"
-  default     = "false"
-}
-
-### Application Load Balancer specific variables
-
-variable "idle_timeout" {
-  description = "Controls the time in seconds that the connection is allowed to be idle"
-  type        = "string"
-  default     = "60"
-}
-
-variable "enable_http2" {
-  description = "Should be true if you want to indicate if HTTP/2 needs to be enabled on Application Load Balancer"
-  type        = "string"
-  default     = "true"
+  default = {
+    "Name" = "RHForum2019"
+  }
 }
